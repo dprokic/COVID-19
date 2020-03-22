@@ -25,5 +25,5 @@ jobs:
     # Merge daily reports
     - name: Merge daily reports
       run: |
-        head -n 1 csse_covid_19_data/csse_covid_19_daily_reports/01-22-2020.csv > merge_covid_19_daily_reports/merge.csv
+        head -n 1 csse_covid_19_data/csse_covid_19_daily_reports/01-22-2020.csv | awk -F"," 'BEGIN { OFS = "," } {$6="Date"; print}' > merge_covid_19_daily_reports/merge.csv
         for file in $(ls csse_covid_19_data/csse_covid_19_daily_reports/*.csv); do day=${file:47:10}; tail -q -n +2 "$file"; echo ""; done | egrep -v "^$" | awk -v day="$(echo "${file:47:10}" | sed "s/-/\//g")" -F"," 'BEGIN { OFS = "," } {$6=day; print}' >> merge_covid_19_daily_reports/merge.csv
